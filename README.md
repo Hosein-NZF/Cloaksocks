@@ -1,4 +1,4 @@
-# Cloaksocks (Customize runner for Debian)
+# Cloaksocks (Customize runner for (Debian distribution)
 **Cloak** is a universal pluggable transport that cryptographically obfuscates proxy traffic as legitimate HTTPS traffic, disguises the proxy server as a normal web server, multiplexes traffic through a fixed amount of TCP connections and provides multi-user usage control.
 
 **Cloaksocks** consists of scripts and Dockerfiles to enhance and simplify Shadowsocks/Cloak usage.
