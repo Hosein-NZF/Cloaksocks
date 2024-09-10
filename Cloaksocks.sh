@@ -9,17 +9,21 @@ echo  "=========================================================================
 echo  "=============================================================================="
 echo
 
-
 InstallDep(){
-	rpm -qa | grep docker-ce > /dev/null
+	# Check if docker is installed
+	dpkg -l | grep docker > /dev/null
 	if [ $? -eq 1 ]
 	then
-		yum install -y yum-utils
-		yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-		yum install docker-ce
+		apt-get update
+		apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common
+		curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+		echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+		apt-get update
+		apt-get install -y docker-ce docker-ce-cli containerd.io
 		systemctl start docker
 	fi
 	
+	# Check if docker-compose is installed
 	docker-compose version > /dev/null
 	if [ $? -eq 1 ]
 	then
@@ -28,10 +32,11 @@ InstallDep(){
 		chmod +x /usr/local/bin/docker-compose
 	fi
 	
-	rpm -qa | grep qrencode > /dev/null
+	# Check if qrencode is installed
+	dpkg -l | grep qrencode > /dev/null
 	if [ $? -eq 1 ]
 	then
-		yum install qrencode
+		apt-get install -y qrencode
 	fi
 }
 
@@ -50,8 +55,6 @@ ReadArgs(){
 	read -e -p "Enter ByPassUID: " -i "$CloakUID" BYPASSUID
 	read -e -p "Enter PrivateKey: " -i "$PrivateKey" PRIVATEKEY
 	read -e -p "Enter PublicKey: " -i "$PublicKey" PUBLICKEY
-
-
 
 	echo "Encryption methods: "
 	echo "1) aes-256-gcm"
@@ -77,7 +80,6 @@ ReadArgs(){
 	stty echo
 	echo
 	echo
-
 
 	echo "Enter AdminUID (Optional): "
 	echo "1) UseByPassUID as AdminUID"
@@ -149,7 +151,6 @@ ShowConnectionInfo(){
 	echo $SERVER_BASE64
 	echo
 }
-
 
 if [ -x bin/ck_server ]
 then
